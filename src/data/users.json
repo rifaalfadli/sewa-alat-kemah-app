@@ -1,0 +1,15 @@
+[
+  {
+    "id": "USR-001",
+    "nama": "Muhammad Rifa Alfadli",
+    "username": "rifa",
+    "password": "123",
+    "email": "rifa@email.com",
+    "telp": "0812-3456-7890",
+    "alamat": "Bogor, Jawa Barat",
+    "role": "Premium Member",
+    "join_date": "Oktober 2023",
+    "total_rent": 12,
+    "avatar_bg": "10b981"
+  }
+]
