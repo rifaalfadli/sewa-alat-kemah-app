@@ -98,7 +98,7 @@ export default function Riwayat() {
                     <Receipt size={18} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.05em] leading-none mb-1">
                       ID Transaksi
                     </p>
                     <p className="text-xs font-black text-slate-700 tracking-wider font-mono">
@@ -108,7 +108,7 @@ export default function Riwayat() {
                 </div>
 
                 <div
-                  className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border ${
+                  className={`px-5 py-2 rounded-full text-[12px] font-bold uppercase tracking-[0.05em] flex items-center gap-2 border ${
                     trx.status === "Berhasil"
                       ? "bg-blue-50 text-blue-600 border-blue-100"
                       : trx.status === "Menunggu Persetujuan"
@@ -139,10 +139,10 @@ export default function Riwayat() {
                         />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-tight">
+                        <h4 className="text-[14px] font-bold text-slate-800 uppercase tracking-tight">
                           {item.name}
                         </h4>
-                        <p className="text-[10px] font-medium text-slate-400 uppercase">
+                        <p className="text-[12px] font-medium text-slate-400 uppercase">
                           {item.jumlah} Unit × {item.durasi} Hari
                         </p>
                       </div>
@@ -152,7 +152,7 @@ export default function Riwayat() {
 
                 {/* Total Harga */}
                 <div className="lg:col-span-5 flex flex-col md:items-end border-t lg:border-t-0 lg:border-l border-slate-100 pt-6 lg:pt-0 lg:pl-10">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                  <p className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.05em] mb-1">
                     Total Pembayaran
                   </p>
                   <p className="text-3xl font-black text-emerald-600 tracking-tighter">
@@ -188,7 +188,7 @@ export default function Riwayat() {
                           size={20}
                           className="text-slate-400 group-hover:text-emerald-600 transition-colors"
                         />
-                        <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+                        <span className="text-[12px] font-bold text-slate-500 uppercase tracking-widest">
                           Klik untuk Upload Bukti Pembayaran
                         </span>
                       </div>
