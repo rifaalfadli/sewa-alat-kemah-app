@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -35,10 +35,9 @@ const Category = () => {
     Survival: Flame,
   };
 
-  const categories = [
-    "Semua",
-    ...new Set(toolsData.map((item) => item.category)),
-  ];
+  const categories = useMemo(() => {
+    return ["Semua", ...new Set(toolsData.map((item) => item.category))];
+  }, []);
 
   useEffect(() => {
     setProducts(toolsData);
@@ -107,7 +106,7 @@ const Category = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-3 text-emerald-600">
             <Compass size={24} className="animate-spin-slow" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em]">
+            <span className="text-[12px] font-bold uppercase tracking-[0.3em]">
               Premium Equipment
             </span>
           </div>
@@ -179,7 +178,7 @@ const Category = () => {
                 className={`relative z-20 transition-colors duration-300 ${isActive ? "text-white" : "text-slate-400 group-hover:text-emerald-600"}`}
               />
               <span
-                className={`relative z-20 text-[11px] font-black uppercase tracking-widest transition-colors duration-300 ${isActive ? "text-white" : "text-slate-500 group-hover:text-slate-900"}`}
+                className={`relative z-20 text-[12px] font-bold uppercase tracking-widest transition-colors duration-300 ${isActive ? "text-white" : "text-slate-500 group-hover:text-slate-900"}`}
               >
                 {cat}
               </span>
@@ -202,8 +201,8 @@ const Category = () => {
               onClick={() => navigate(`/detail/${p.id}`)}
               className="bg-white rounded-[2.8rem] p-6 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-emerald-500/30 hover:shadow-[0_20px_50px_rgba(6,78,59,0.15)] transition-all duration-500 group relative cursor-pointer"
             >
-              <div className="absolute top-8 left-8 z-20">
-                <span className="bg-emerald-950/90 backdrop-blur-md text-white text-[8px] font-black px-3 py-1.5 rounded-lg shadow-md uppercase tracking-[0.15em] border border-white/10">
+              <div className="relative">
+                <span className="absolute top-4 left-4 z-20 bg-emerald-950/90 backdrop-blur-md text-white text-[8px] font-black px-3 py-1.5 rounded-lg shadow-md uppercase tracking-[0.15em] border border-white/10">
                   {p.category}
                 </span>
               </div>

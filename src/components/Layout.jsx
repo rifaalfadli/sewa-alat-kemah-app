@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Home,
@@ -7,15 +7,13 @@ import {
   User,
   LogOut,
   Menu,
-  X,
   Bell,
   Tent,
   Clock,
   Mic,
   MicOff,
-  Sparkles,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import usersData from "../data/users.json";
 
 export default function Layout({ children }) {
@@ -27,6 +25,93 @@ export default function Layout({ children }) {
   // --- STATE AI ASSISTANT ---
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
+
+  // --- LOGIKA PERINTAH SUARA ---
+  const handleVoiceCommand = useCallback(
+    (command) => {
+      console.log("AI Mendengar:", command);
+      const text = command.toLowerCase(); // Paksa ke huruf kecil agar pencocokan akurat
+
+      // 1. Logika Pemetaan Sinonim & Kategori Spesifik
+      // Menghubungkan ucapan user dengan kategori yang ada di tools.json
+      let searchTarget = "";
+
+      if (
+        text.includes("tas") ||
+        text.includes("carrier") ||
+        text.includes("ransel") ||
+        text.includes("keril")
+      ) {
+        searchTarget = "Tas";
+      } else if (
+        text.includes("sepatu") ||
+        text.includes("alas kaki") ||
+        text.includes("boots")
+      ) {
+        searchTarget = "Sepatu";
+      } else if (
+        text.includes("tenda") ||
+        text.includes("dome") ||
+        text.includes("flysheet")
+      ) {
+        searchTarget = "Tenda";
+      } else if (
+        text.includes("masak") ||
+        text.includes("kompor") ||
+        text.includes("nesting") ||
+        text.includes("kettle")
+      ) {
+        searchTarget = "Masak";
+      } else if (
+        text.includes("aksesoris") ||
+        text.includes("matras") ||
+        text.includes("senter") ||
+        text.includes("lampu") ||
+        text.includes("kursi")
+      ) {
+        searchTarget = "Aksesoris";
+      }
+
+      // 2. Eksekusi Perintah Navigasi
+      if (text.includes("dashboard") || text.includes("beranda")) {
+        speak("Baik, membuka halaman beranda untuk Anda.");
+        navigate("/dashboard");
+      } else if (searchTarget !== "") {
+        // Jika terdeteksi kategori dari pemetaan di atas
+        speak(`Baik, menampilkan koleksi ${searchTarget} untuk Anda.`);
+        navigate("/category", { state: { voiceSearch: searchTarget } });
+      } else if (
+        text.includes("kategori") ||
+        text.includes("alat") ||
+        text.includes("katalog")
+      ) {
+        speak("Menampilkan katalog peralatan outdoor.");
+        navigate("/category");
+      } else if (text.includes("keranjang")) {
+        speak("Membuka keranjang belanja Anda.");
+        navigate("/cart");
+      } else if (text.includes("riwayat") || text.includes("pesanan")) {
+        speak("Membuka halaman riwayat penyewaan.");
+        navigate("/riwayat");
+      } else if (
+        text.includes("profil") ||
+        text.includes("saya") ||
+        text.includes("akun")
+      ) {
+        speak("Membuka profil akun Anda.");
+        navigate("/profile");
+      } else if (text.includes("cari")) {
+        // Fitur pencarian bebas (misal: "Cari Matras")
+        const searchItem = text.replace("cari", "").trim();
+        speak(`Mencari ${searchItem}, mohon tunggu sebentar.`);
+        navigate("/category", { state: { voiceSearch: searchItem } });
+      } else {
+        // Jika suara terdengar tapi tidak ada keyword yang cocok
+        speak("Maaf, saya tidak mengenali perintah tersebut. Bisa diulangi?");
+      }
+    },
+    [navigate],
+  );
 
   useEffect(() => {
     // Auth Logic
@@ -67,7 +152,7 @@ export default function Layout({ children }) {
 
     // Trigger loading voices (penting untuk Chrome/Edge)
     window.speechSynthesis.getVoices();
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, handleVoiceCommand]);
 
   // --- FUNGSI AI BERBICARA (LOGAT GOOGLE PEREMPUAN) ---
   const speak = (text) => {
@@ -93,90 +178,6 @@ export default function Layout({ children }) {
     utterance.pitch = 1.1; // Sedikit dinaikkan agar terdengar lebih ramah/perempuan
 
     window.speechSynthesis.speak(utterance);
-  };
-
-  // --- LOGIKA PERINTAH SUARA ---
-  const handleVoiceCommand = (command) => {
-    console.log("AI Mendengar:", command);
-    const text = command.toLowerCase(); // Paksa ke huruf kecil agar pencocokan akurat
-
-    // 1. Logika Pemetaan Sinonim & Kategori Spesifik
-    // Menghubungkan ucapan user dengan kategori yang ada di tools.json
-    let searchTarget = "";
-
-    if (
-      text.includes("tas") ||
-      text.includes("carrier") ||
-      text.includes("ransel") ||
-      text.includes("keril")
-    ) {
-      searchTarget = "Tas";
-    } else if (
-      text.includes("sepatu") ||
-      text.includes("alas kaki") ||
-      text.includes("boots")
-    ) {
-      searchTarget = "Sepatu";
-    } else if (
-      text.includes("tenda") ||
-      text.includes("dome") ||
-      text.includes("flysheet")
-    ) {
-      searchTarget = "Tenda";
-    } else if (
-      text.includes("masak") ||
-      text.includes("kompor") ||
-      text.includes("nesting") ||
-      text.includes("kettle")
-    ) {
-      searchTarget = "Masak";
-    } else if (
-      text.includes("aksesoris") ||
-      text.includes("matras") ||
-      text.includes("senter") ||
-      text.includes("lampu") ||
-      text.includes("kursi")
-    ) {
-      searchTarget = "Aksesoris";
-    }
-
-    // 2. Eksekusi Perintah Navigasi
-    if (text.includes("dashboard") || text.includes("beranda")) {
-      speak("Baik, membuka halaman beranda untuk Anda.");
-      navigate("/dashboard");
-    } else if (searchTarget !== "") {
-      // Jika terdeteksi kategori dari pemetaan di atas
-      speak(`Baik, menampilkan koleksi ${searchTarget} untuk Anda.`);
-      navigate("/category", { state: { voiceSearch: searchTarget } });
-    } else if (
-      text.includes("kategori") ||
-      text.includes("alat") ||
-      text.includes("katalog")
-    ) {
-      speak("Menampilkan katalog peralatan outdoor.");
-      navigate("/category");
-    } else if (text.includes("keranjang")) {
-      speak("Membuka keranjang belanja Anda.");
-      navigate("/cart");
-    } else if (text.includes("riwayat") || text.includes("pesanan")) {
-      speak("Membuka halaman riwayat penyewaan.");
-      navigate("/riwayat");
-    } else if (
-      text.includes("profil") ||
-      text.includes("saya") ||
-      text.includes("akun")
-    ) {
-      speak("Membuka profil akun Anda.");
-      navigate("/profile");
-    } else if (text.includes("cari")) {
-      // Fitur pencarian bebas (misal: "Cari Matras")
-      const searchItem = text.replace("cari", "").trim();
-      speak(`Mencari ${searchItem}, mohon tunggu sebentar.`);
-      navigate("/category", { state: { voiceSearch: searchItem } });
-    } else {
-      // Jika suara terdengar tapi tidak ada keyword yang cocok
-      speak("Maaf, saya tidak mengenali perintah tersebut. Bisa diulangi?");
-    }
   };
 
   const startListening = () => {
@@ -264,6 +265,53 @@ export default function Layout({ children }) {
           </button>
         </div>
       </aside>
+      {/* SIDEBAR MOBILE */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* BACKDROP */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setSidebarOpen(false)}
+          />
+
+          {/* PANEL */}
+          <aside className="absolute left-0 top-0 h-full w-72 bg-emerald-950 text-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-10">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-500 rounded-lg">
+                  <Tent size={22} />
+                </div>
+                <span className="font-bold uppercase text-sm">
+                  TIGA TITIK OUTDOOR
+                </span>
+              </div>
+
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="text-white/70 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <nav className="space-y-2">
+              {menu.map((item) => (
+                <NavItem key={item.path} item={item} isMobile />
+              ))}
+            </nav>
+
+            <div className="mt-8 pt-6 border-t border-emerald-900">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 w-full p-4 text-emerald-300 hover:text-red-400 rounded-2xl"
+              >
+                <LogOut size={20} />
+                <span className="font-semibold text-sm">Logout</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="bg-white/70 backdrop-blur-md sticky top-0 z-50 px-6 lg:px-10 py-3 border-b border-slate-200/60 flex items-center justify-between">

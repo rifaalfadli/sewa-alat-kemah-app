@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import {
   Package,
   Upload,
-  ShieldCheck,
   Clock,
   CheckCircle2,
   Receipt,
-  FileText,
   AlertCircle,
 } from "lucide-react";
 
 export default function Riwayat() {
   const [riwayat, setRiwayat] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [uploadingId, setUploadingId] = useState(null);
+  const [, setUploadingId] = useState(null);
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("riwayat_transaksi")) || [];

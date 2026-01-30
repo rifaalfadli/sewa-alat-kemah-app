@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Webcam from "react-webcam";
 import {
   ShieldAlert,
-  Upload,
   CreditCard,
   Landmark,
   Wallet,
